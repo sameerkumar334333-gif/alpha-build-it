@@ -48,7 +48,7 @@ export const GlowButton = ({
                 className
             )}
         >
-            <span className="relative z-10">{children}</span>
+            <span className="relative z-10 flex items-center justify-center gap-2 whitespace-nowrap">{children}</span>
         </motion.button>
     );
 };

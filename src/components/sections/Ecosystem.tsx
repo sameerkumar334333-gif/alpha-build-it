@@ -2,7 +2,6 @@
 
 import { Section } from "@/components/ui/section";
 import { cn } from "@/lib/utils";
-import { motion, useScroll, useTransform } from "framer-motion";
 import {
     Code2,
     Database,
@@ -15,7 +14,6 @@ import {
     Rocket,
     Search
 } from "lucide-react";
-import { useRef } from "react";
 
 const ecosystemItems = [
     { icon: Code2, label: "Next.js Development", color: "text-blue-600", bg: "bg-blue-50" },
@@ -31,18 +29,9 @@ const ecosystemItems = [
 ];
 
 export function Ecosystem() {
-    const containerRef = useRef<HTMLDivElement>(null);
-    const { scrollYProgress } = useScroll({
-        target: containerRef,
-        offset: ["start end", "end start"],
-    });
-
-    const x1 = useTransform(scrollYProgress, [0, 1], [0, -200]);
-    const x2 = useTransform(scrollYProgress, [0, 1], [-200, 0]);
-
     return (
-        <Section className="py-24 relative overflow-hidden" ref={containerRef}>
-            <div className="text-center mb-16 relative z-10">
+        <section className="py-24 relative overflow-hidden">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16 relative z-10">
                 <h2 className="text-3xl md:text-5xl font-bold font-heading mb-4 text-slate-900">
                     The <span className="text-primary">Ecosystem</span>
                 </h2>
@@ -51,17 +40,14 @@ export function Ecosystem() {
                 </p>
             </div>
 
-            <div className="relative flex flex-col gap-8 -rotate-1 skew-y-1 scale-110">
-                {/* Row 1 - Left to Right */}
-                <div className="flex overflow-hidden">
-                    <motion.div
-                        style={{ x: x1 }}
-                        className="flex gap-4 min-w-full"
-                    >
-                        {[...ecosystemItems, ...ecosystemItems].map((item, i) => (
+            <div className="flex flex-col gap-8 w-full">
+                {/* Row 1 */}
+                <div className="flex overflow-hidden group w-full">
+                    <div className="flex gap-4 min-w-full animate-marquee px-4">
+                        {[...ecosystemItems, ...ecosystemItems, ...ecosystemItems, ...ecosystemItems].map((item, i) => (
                             <div
                                 key={i}
-                                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50 whitespace-nowrap group hover:-translate-y-1 transition-transform duration-300"
+                                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-slate-100 bg-white shadow-md w-max flex-shrink-0"
                             >
                                 <div className={cn("p-2 rounded-lg", item.bg)}>
                                     <item.icon className={cn("w-5 h-5", item.color)} />
@@ -71,19 +57,16 @@ export function Ecosystem() {
                                 </span>
                             </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
 
-                {/* Row 2 - Right to Left */}
-                <div className="flex overflow-hidden">
-                    <motion.div
-                        style={{ x: x2 }}
-                        className="flex gap-4 min-w-full"
-                    >
-                        {[...ecosystemItems, ...ecosystemItems].reverse().map((item, i) => (
+                {/* Row 2 (Reverse) */}
+                <div className="flex overflow-hidden group w-full">
+                    <div className="flex gap-4 min-w-full animate-marquee-reverse px-4">
+                        {[...ecosystemItems, ...ecosystemItems, ...ecosystemItems, ...ecosystemItems].map((item, i) => (
                             <div
                                 key={i}
-                                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-slate-100 bg-white shadow-xl shadow-slate-200/50 whitespace-nowrap group hover:-translate-y-1 transition-transform duration-300"
+                                className="flex items-center gap-3 px-6 py-4 rounded-2xl border border-slate-100 bg-white shadow-md w-max flex-shrink-0"
                             >
                                 <div className={cn("p-2 rounded-lg", item.bg)}>
                                     <item.icon className={cn("w-5 h-5", item.color)} />
@@ -93,9 +76,9 @@ export function Ecosystem() {
                                 </span>
                             </div>
                         ))}
-                    </motion.div>
+                    </div>
                 </div>
             </div>
-        </Section>
+        </section>
     );
 }

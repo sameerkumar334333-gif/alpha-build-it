@@ -1,306 +1,250 @@
 "use client";
 
 import { GlowButton } from "@/components/ui/glow-button";
-import { cn } from "@/lib/utils";
-import { addDays, format, startOfToday, startOfWeek, endOfWeek, eachDayOfInterval, isSameDay, isToday } from "date-fns";
-import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, ArrowRight, Calendar, Check, Clock, Globe, Laptop, Server, Zap, ChevronLeft, ChevronRight } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowLeft, ArrowRight, Calendar, CheckCircle2, ChevronRight, Mail, User } from "lucide-react";
 import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-// --- Types ---
-type BookingData = {
-    name: string;
-    email: string;
-    intent: string | null;
-    date: Date | null;
-    time: string | null;
-};
+type Step = "name" | "email" | "service" | "calendar" | "success";
 
-const STEPS = [
-    { id: 1, title: "Discovery" },
-    { id: 2, title: "Schedule" },
-    { id: 3, title: "Confirmation" }
-];
-
-// --- Main Wizard Component ---
 export function BookingWizard() {
-    const [step, setStep] = useState(1);
-    const [data, setData] = useState<BookingData>({
+    const [step, setStep] = useState<Step>("name");
+    const [formData, setFormData] = useState({
         name: "",
         email: "",
-        intent: null,
-        date: null,
-        time: null,
+        service: "",
+        date: ""
     });
 
-    const nextStep = () => setStep((s) => Math.min(s + 1, 3));
-    const prevStep = () => setStep((s) => Math.max(s - 1, 1));
+    const services = [
+        "Custom Web Development",
+        "E-Commerce Store",
+        "SaaS Product",
+        "Process Automation",
+        "Other"
+    ];
 
-    const updateData = (updates: Partial<BookingData>) => {
-        setData((prev) => ({ ...prev, ...updates }));
+    const nextStep = (next: Step) => {
+        setStep(next);
     };
 
     return (
-        <div className="w-full max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden min-h-[600px] flex flex-col">
-            {/* Progress Bar */}
-            <div className="bg-slate-50 border-b border-slate-100 p-6 md:p-8">
-                <div className="flex justify-between items-center mb-4">
-                    <h2 className="text-xl font-bold font-heading text-slate-900">
-                        {step === 1 && "Tell us about your vision"}
-                        {step === 2 && "Pick a time slot"}
-                        {step === 3 && "You're all set!"}
-                    </h2>
-                    <div className="text-sm font-medium text-slate-400">
-                        Step {step} of 3
-                    </div>
-                </div>
-                <div className="h-2 bg-slate-200 rounded-full overflow-hidden">
-                    <motion.div
-                        className="h-full bg-primary"
-                        initial={{ width: "0%" }}
-                        animate={{ width: `${(step / 3) * 100}%` }}
-                        transition={{ type: "spring", stiffness: 300, damping: 30 }}
-                    />
-                </div>
+        <div className="max-w-2xl mx-auto w-full">
+            {/* Progress Visual - Connected Line */}
+            <div className="flex items-center justify-between mb-12 relative px-4">
+                <div className="absolute top-1/2 left-0 w-full h-0.5 bg-slate-200 -z-10" />
+                <div
+                    className="absolute top-1/2 left-0 h-0.5 bg-primary -z-10 transition-all duration-500 ease-in-out"
+                    style={{
+                        width: step === 'name' ? '0%' :
+                            step === 'email' ? '33%' :
+                                step === 'service' ? '66%' : '100%'
+                    }}
+                />
+
+                {["name", "email", "service", "calendar"].map((s, i) => {
+                    const isActive = step === s;
+                    const isPast = ["name", "email", "service", "calendar", "success"].indexOf(step) > i;
+
+                    return (
+                        <div key={s} className="relative bg-slate-50 p-2 rounded-full">
+                            <div className={cn(
+                                "w-4 h-4 rounded-full border-2 transition-all duration-300",
+                                isPast || isActive ? "bg-primary border-primary scale-125" : "bg-white border-slate-300"
+                            )} />
+                            {isActive && (
+                                <motion.div
+                                    layoutId="activeStepGlow"
+                                    className="absolute inset-0 bg-primary/30 rounded-full blur-md -z-10"
+                                />
+                            )}
+                        </div>
+                    );
+                })}
             </div>
 
-            {/* Content Area */}
-            <div className="flex-1 p-6 md:p-12 relative overflow-hidden">
+            <div className="bg-white rounded-3xl shadow-2xl p-8 md:p-12 border border-slate-100 min-h-[400px] flex flex-col justify-center relative overflow-hidden">
                 <AnimatePresence mode="wait">
-                    {step === 1 && (
-                        <StepDiscovery
-                            key="step1"
-                            data={data}
-                            updateData={updateData}
-                            onNext={nextStep}
-                        />
+                    {/* Step 1: Name */}
+                    {step === "name" && (
+                        <motion.div
+                            key="name"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-6"
+                        >
+                            <div>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">First things first.</h3>
+                                <p className="text-slate-500">What should we call you?</p>
+                            </div>
+                            <div className="relative group">
+                                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    type="text"
+                                    placeholder="Your Full Name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-4 text-lg font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="flex justify-end pt-4">
+                                <GlowButton
+                                    onClick={() => formData.name && nextStep("email")}
+                                    disabled={!formData.name}
+                                    className="w-full md:w-auto"
+                                >
+                                    Continue <ArrowRight className="ml-2 w-4 h-4" />
+                                </GlowButton>
+                            </div>
+                        </motion.div>
                     )}
-                    {step === 2 && (
-                        <StepSchedule
-                            key="step2"
-                            data={data}
-                            updateData={updateData}
-                            onNext={nextStep}
-                            onBack={prevStep}
-                        />
+
+                    {/* Step 2: Email */}
+                    {step === "email" && (
+                        <motion.div
+                            key="email"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-6"
+                        >
+                            <button onClick={() => setStep('name')} className="text-sm text-slate-400 hover:text-slate-600 flex items-center gap-1 mb-2">
+                                <ArrowLeft className="w-3 h-3" /> Back
+                            </button>
+                            <div>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Great to meet you, <span className="text-primary">{formData.name}</span>.</h3>
+                                <p className="text-slate-500">Where can we send the invite?</p>
+                            </div>
+                            <div className="relative group">
+                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-primary transition-colors" />
+                                <input
+                                    type="email"
+                                    placeholder="your@email.com"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                    className="w-full bg-slate-50 border border-slate-200 rounded-xl py-4 pl-12 pr-4 text-lg font-medium outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all"
+                                    autoFocus
+                                />
+                            </div>
+                            <div className="flex justify-end pt-4">
+                                <GlowButton
+                                    onClick={() => formData.email && nextStep("service")}
+                                    disabled={!formData.email}
+                                    className="w-full md:w-auto"
+                                >
+                                    Next Step <ArrowRight className="ml-2 w-4 h-4" />
+                                </GlowButton>
+                            </div>
+                        </motion.div>
                     )}
-                    {step === 3 && (
-                        <StepSuccess
-                            key="step3"
-                            data={data}
-                        />
+
+                    {/* Step 3: Service */}
+                    {step === "service" && (
+                        <motion.div
+                            key="service"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-6"
+                        >
+                            <button onClick={() => setStep('email')} className="text-sm text-slate-400 hover:text-slate-600 flex items-center gap-1 mb-2">
+                                <ArrowLeft className="w-3 h-3" /> Back
+                            </button>
+                            <div>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">How can we help?</h3>
+                                <p className="text-slate-500">Select the primary focus for our call.</p>
+                            </div>
+                            <div className="grid gap-3">
+                                {services.map((svc) => (
+                                    <button
+                                        key={svc}
+                                        onClick={() => {
+                                            setFormData({ ...formData, service: svc });
+                                            nextStep("calendar");
+                                        }}
+                                        className={cn(
+                                            "w-full text-left p-4 rounded-xl border transition-all duration-200 flex items-center justify-between group",
+                                            formData.service === svc
+                                                ? "bg-primary/5 border-primary text-primary font-bold shadow-sm"
+                                                : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-white hover:border-primary/50 hover:shadow-md"
+                                        )}
+                                    >
+                                        {svc}
+                                        <ChevronRight className={cn(
+                                            "w-5 h-5 transition-transform",
+                                            formData.service === svc ? "translate-x-0 text-primary" : "-translate-x-2 opacity-0 group-hover:translate-x-0 group-hover:opacity-50"
+                                        )} />
+                                    </button>
+                                ))}
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Step 4: Calendar (Mock) */}
+                    {step === "calendar" && (
+                        <motion.div
+                            key="calendar"
+                            initial={{ opacity: 0, x: 20 }}
+                            animate={{ opacity: 1, x: 0 }}
+                            exit={{ opacity: 0, x: -20 }}
+                            className="space-y-6"
+                        >
+                            <button onClick={() => setStep('service')} className="text-sm text-slate-400 hover:text-slate-600 flex items-center gap-1 mb-2">
+                                <ArrowLeft className="w-3 h-3" /> Back
+                            </button>
+                            <div>
+                                <h3 className="text-2xl font-bold text-slate-900 mb-2">Pick a time.</h3>
+                                <p className="text-slate-500">We're usually fully booked, but here are some slots.</p>
+                            </div>
+
+                            {/* Mock Calendar Slots */}
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                                {["Mon 10:00 AM", "Mon 2:00 PM", "Tue 11:30 AM", "Wed 9:00 AM", "Thu 3:00 PM", "Fri 1:00 PM"].map((slot) => (
+                                    <button
+                                        key={slot}
+                                        onClick={() => nextStep("success")}
+                                        className="p-3 text-sm bg-white border border-slate-200 rounded-lg hover:border-primary hover:text-primary hover:shadow-md transition-all text-slate-600 font-medium text-center"
+                                    >
+                                        {slot}
+                                    </button>
+                                ))}
+                            </div>
+                            <div className="p-4 bg-orange-50 border border-orange-100 rounded-xl text-orange-800 text-sm flex items-start gap-2">
+                                <Calendar className="w-4 h-4 mt-0.5 shrink-0" />
+                                <div>
+                                    <span className="font-bold">Note:</span> We only take on 2 new clients per month to ensure quality.
+                                </div>
+                            </div>
+                        </motion.div>
+                    )}
+
+                    {/* Step 5: Success */}
+                    {step === "success" && (
+                        <motion.div
+                            key="success"
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            className="flex flex-col items-center text-center space-y-6 py-8"
+                        >
+                            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center text-green-600 mb-4 animate-[bounce_1s_infinite]">
+                                <CheckCircle2 className="w-10 h-10" />
+                            </div>
+                            <div>
+                                <h3 className="text-3xl font-bold text-slate-900 mb-2">You're on the list!</h3>
+                                <p className="text-slate-500 max-w-sm mx-auto">
+                                    We've sent a confirmation to <span className="font-bold text-slate-900">{formData.email}</span>. Prepare for a deep dive into your business growth.
+                                </p>
+                            </div>
+                            <GlowButton onClick={() => window.location.href = '/'}>
+                                Return Home
+                            </GlowButton>
+                        </motion.div>
                     )}
                 </AnimatePresence>
             </div>
         </div>
-    );
-}
-
-// --- Step 1: Discovery ---
-const INTENTS = [
-    { id: "web", label: "New Website", icon: Globe, color: "bg-blue-50 text-blue-600 border-blue-100" },
-    { id: "app", label: "Web App / SaaS", icon: Laptop, color: "bg-purple-50 text-purple-600 border-purple-100" },
-    { id: "automation", label: "Automation", icon: Zap, color: "bg-amber-50 text-amber-600 border-amber-100" },
-    { id: "backend", label: "Backend / API", icon: Server, color: "bg-emerald-50 text-emerald-600 border-emerald-100" },
-];
-
-function StepDiscovery({ data, updateData, onNext }: { data: BookingData, updateData: (d: Partial<BookingData>) => void, onNext: () => void }) {
-    const isValid = data.name.length > 2 && data.email.includes("@") && data.intent;
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="h-full flex flex-col"
-        >
-            <div className="space-y-6 flex-1">
-                <div className="grid md:grid-cols-2 gap-6">
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Name</label>
-                        <input
-                            type="text"
-                            placeholder="John Doe"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            value={data.name}
-                            onChange={(e) => updateData({ name: e.target.value })}
-                        />
-                    </div>
-                    <div className="space-y-2">
-                        <label className="text-sm font-bold text-slate-700">Work Email</label>
-                        <input
-                            type="email"
-                            placeholder="john@company.com"
-                            className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all"
-                            value={data.email}
-                            onChange={(e) => updateData({ email: e.target.value })}
-                        />
-                    </div>
-                </div>
-
-                <div className="space-y-2">
-                    <label className="text-sm font-bold text-slate-700">What are you looking to build?</label>
-                    <div className="grid grid-cols-2 gap-4">
-                        {INTENTS.map((intent) => (
-                            <button
-                                key={intent.id}
-                                onClick={() => updateData({ intent: intent.id })}
-                                className={cn(
-                                    "p-4 rounded-xl border text-left transition-all duration-200 flex items-center gap-3",
-                                    data.intent === intent.id
-                                        ? `ring-2 ring-primary ring-offset-2 ${intent.color}`
-                                        : "border-slate-200 hover:border-slate-300 hover:bg-slate-50"
-                                )}
-                            >
-                                <div className={cn("p-2 rounded-lg bg-white", data.intent === intent.id ? "bg-white/50" : "bg-slate-100")}>
-                                    <intent.icon className="w-5 h-5" />
-                                </div>
-                                <span className="font-semibold">{intent.label}</span>
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex justify-end pt-8 mt-auto">
-                <GlowButton
-                    onClick={onNext}
-                    disabled={!isValid}
-                    className={!isValid ? "opacity-50 cursor-not-allowed" : ""}
-                >
-                    Next Step <ArrowRight className="ml-2 w-4 h-4" />
-                </GlowButton>
-            </div>
-        </motion.div>
-    );
-}
-
-// --- Step 2: Schedule (Custom Calendar) ---
-const TIME_SLOTS = [
-    "10:00 AM", "11:00 AM", "01:00 PM", "02:00 PM", "03:30 PM", "05:00 PM"
-];
-
-function StepSchedule({ data, updateData, onNext, onBack }: { data: BookingData, updateData: (d: Partial<BookingData>) => void, onNext: () => void, onBack: () => void }) {
-    const today = startOfToday();
-    const [currentMonth, setCurrentMonth] = useState(format(today, "MMM-yyyy"));
-    const firstDayCurrentMonth = startOfWeek(today); // Simplified for demo, just showing current week onwards essentially
-
-    // Generate next 14 days
-    const days = eachDayOfInterval({
-        start: today,
-        end: addDays(today, 13)
-    });
-
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            className="h-full flex flex-col"
-        >
-            <div className="grid md:grid-cols-2 gap-8 flex-1">
-                {/* Date Picker (List View for simplicity/modern feel) */}
-                <div>
-                    <label className="text-sm font-bold text-slate-700 block mb-4">Select a Date</label>
-                    <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
-                        {days.map((day, dayIdx) => {
-                            const isSelected = data.date && isSameDay(day, data.date);
-                            const isTodayDate = isToday(day);
-
-                            return (
-                                <button
-                                    key={day.toString()}
-                                    onClick={() => updateData({ date: day, time: null })} // Reset time on date change
-                                    className={cn(
-                                        "flex flex-col items-center justify-center p-3 rounded-xl border transition-all text-sm",
-                                        isSelected
-                                            ? "bg-primary text-white border-primary shadow-lg shadow-primary/30"
-                                            : "bg-white border-slate-200 hover:border-slate-300 hover:bg-slate-50 text-slate-600"
-                                    )}
-                                >
-                                    <span className={cn("text-xs font-medium uppercase", isSelected ? "text-white/80" : "text-slate-400")}>
-                                        {format(day, 'EEE')}
-                                    </span>
-                                    <span className="text-lg font-bold">
-                                        {format(day, 'd')}
-                                    </span>
-                                    {isTodayDate && <span className="w-1 h-1 rounded-full bg-blue-500 mt-1" />}
-                                </button>
-                            );
-                        })}
-                    </div>
-                </div>
-
-                {/* Time Picker */}
-                <div className={cn("transition-opacity duration-300", !data.date && "opacity-50 pointer-events-none")}>
-                    <label className="text-sm font-bold text-slate-700 block mb-4">Select Time (IST)</label>
-                    <div className="grid grid-cols-2 gap-3">
-                        {TIME_SLOTS.map((time) => (
-                            <button
-                                key={time}
-                                onClick={() => updateData({ time })}
-                                className={cn(
-                                    "flex items-center justify-center gap-2 p-3 rounded-xl border transition-all text-sm font-bold",
-                                    data.time === time
-                                        ? "bg-slate-900 text-white border-slate-900"
-                                        : "bg-white border-slate-200 hover:border-primary hover:text-primary text-slate-600"
-                                )}
-                            >
-                                <Clock className="w-4 h-4" />
-                                {time}
-                            </button>
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            <div className="flex justify-between pt-8 mt-auto">
-                <button
-                    onClick={onBack}
-                    className="flex items-center text-slate-500 hover:text-slate-900 font-medium transition-colors"
-                >
-                    <ArrowLeft className="mr-2 w-4 h-4" /> Back
-                </button>
-                <GlowButton
-                    onClick={onNext}
-                    disabled={!data.date || !data.time}
-                    className={(!data.date || !data.time) ? "opacity-50 cursor-not-allowed" : ""}
-                >
-                    Confirm Booking <Check className="ml-2 w-4 h-4" />
-                </GlowButton>
-            </div>
-        </motion.div>
-    );
-}
-
-// --- Step 3: Success ---
-function StepSuccess({ data }: { data: BookingData }) {
-    return (
-        <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="h-full flex flex-col items-center justify-center text-center space-y-6"
-        >
-            <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mb-4">
-                <Check className="w-10 h-10 text-green-600" />
-            </div>
-
-            <h2 className="text-3xl md:text-4xl font-bold font-heading text-slate-900">
-                Booking Confirmed!
-            </h2>
-
-            <p className="text-slate-500 text-lg max-w-md">
-                Thanks <span className="font-bold text-slate-900">{data.name}</span>. We've scheduled your strategy call for <span className="font-bold text-primary">{data.date && format(data.date, "MMMM do")}</span> at <span className="font-bold text-primary">{data.time}</span>.
-            </p>
-
-            <div className="p-4 bg-slate-50 rounded-xl border border-slate-100 text-sm text-slate-500 flex items-center gap-3">
-                <Calendar className="w-4 h-4" />
-                A calendar invite has been sent to {data.email}
-            </div>
-
-            <GlowButton className="mt-8" onClick={() => window.location.href = "/"}>
-                Back to Home
-            </GlowButton>
-        </motion.div>
     );
 }

@@ -1,71 +1,123 @@
 "use client";
 
 import { Section } from "@/components/ui/section";
-import { Check, X, Zap } from "lucide-react";
+import { Check, X, Zap, ShieldAlert, Rocket } from "lucide-react";
 import { motion } from "framer-motion";
 
 const COMPARISON_POINTS = [
     { feature: "Delivery Time", alpha: "3 Days (Avg)", traditional: "4-8 Weeks" },
-    { feature: "Cost Efficiency", alpha: "75% Lower", traditional: "Expensive Retainers" },
-    { feature: "Technology", alpha: "AI-Powered", traditional: "Manual Coding" },
+    { feature: "Cost (Standard Build)", alpha: "₹25,000", traditional: "₹1,00,000+" },
+    { feature: "Technology", alpha: "Next.js + AI", traditional: "Wordpress / PHP" },
     { feature: "Design Quality", alpha: "Pixel Perfect", traditional: "Template Based" },
-    { feature: "Revisions", alpha: "Rapid Implementation", traditional: "Slow Turnaround" },
-    { feature: "Scalability", alpha: "Enterprise Ready", traditional: "Limited" },
+    { feature: "Revisions", alpha: "Rapid Changes", traditional: "Hourly Billing" },
+    { feature: "Scalability", alpha: "Enterprise Ready", traditional: "Limited Growth" },
 ];
 
 export function Comparison() {
     return (
-        <Section className="py-32">
-            <div className="text-center mb-16">
+        <Section className="py-32 relative overflow-hidden">
+            {/* Background Decor */}
+            <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
+            <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+
+            <div className="text-center mb-20 relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">
+                    <Zap className="w-3 h-3" /> The Alpha Advantage
+                </div>
                 <h2 className="text-4xl md:text-6xl font-bold font-heading mb-6 text-slate-900">
-                    Why Choose <span className="text-primary">Alpha?</span>
+                    Old Way <span className="text-slate-300 px-4">vs</span> <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-primary">New Era</span>
                 </h2>
                 <p className="text-slate-500 max-w-xl mx-auto text-lg">
-                    The traditional agency model is broken. We fixed it with AI.
+                    Stop compromising. See why leading founders are switching to our AI-integrated workflow.
                 </p>
             </div>
 
-            <div className="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl shadow-slate-200/50 border border-slate-100 overflow-hidden">
-                <div className="grid grid-cols-3 bg-slate-50 border-b border-slate-200 p-6 text-sm font-bold uppercase tracking-widest text-slate-500">
-                    <div className="col-span-1">Feature</div>
-                    <div className="col-span-1 text-center text-red-400">Traditional Agency</div>
-                    <div className="col-span-1 text-center text-primary">Alpha Build IT</div>
+            <div className="max-w-5xl mx-auto relative z-10">
+                {/* Headers */}
+                <div className="grid grid-cols-12 mb-8 px-6 text-xs font-bold uppercase tracking-widest text-slate-400">
+                    <div className="col-span-4 pl-4">Traditional Agency</div>
+                    <div className="col-span-4 text-center">Comparison</div>
+                    <div className="col-span-4 text-right pr-4 text-primary">Alpha Build IT</div>
                 </div>
 
-                <div className="divide-y divide-slate-100">
+                <div className="space-y-4">
                     {COMPARISON_POINTS.map((point, i) => (
                         <motion.div
                             key={i}
-                            initial={{ opacity: 0, x: -10 }}
-                            whileInView={{ opacity: 1, x: 0 }}
+                            initial={{ opacity: 0, y: 20 }}
+                            whileInView={{ opacity: 1, y: 0 }}
                             transition={{ delay: i * 0.1 }}
-                            className="grid grid-cols-3 p-6 items-center hover:bg-slate-50/50 transition-colors group"
+                            whileHover={{ scale: 1.01 }}
+                            className="group relative grid grid-cols-12 items-center p-6 rounded-2xl bg-white border border-slate-100 shadow-sm hover:shadow-xl hover:border-slate-200 transition-all duration-300"
                         >
-                            <div className="col-span-1 font-bold text-slate-700">{point.feature}</div>
+                            {/* Hover Glow */}
+                            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-blue-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-2xl pointer-events-none" />
 
-                            <div className="col-span-1 text-center text-slate-400 flex flex-col items-center gap-1 group-hover:text-red-400/80 transition-colors">
-                                <span className="font-medium">{point.traditional}</span>
-                                <X className="w-4 h-4 opacity-50" />
+                            {/* Traditional (Left) */}
+                            <div className="col-span-4 flex items-center gap-3 text-slate-400 group-hover:text-red-400/70 transition-colors pl-4">
+                                <X className="w-5 h-5 opacity-50 shrink-0" />
+                                <span className="font-medium decoration-slate-300/50 decoration-2 group-hover:line-through transition-all">{point.traditional}</span>
                             </div>
 
-                            <div className="col-span-1 text-center text-slate-900 flex flex-col items-center gap-1 relative">
-                                <div className="absolute inset-0 bg-primary/5 rounded-lg -m-2 opacity-0 group-hover:opacity-100 transition-opacity" />
-                                <span className="font-black relative z-10 text-lg flex items-center gap-2">
-                                    {point.alpha}
-                                    <Check className="w-5 h-5 text-primary" />
+                            {/* Feature (Center) */}
+                            <div className="col-span-4 text-center">
+                                <span className="px-3 py-1 rounded-full bg-slate-50 text-slate-500 text-xs font-bold border border-slate-100 group-hover:bg-white group-hover:shadow-sm transition-all">
+                                    {point.feature}
                                 </span>
+                            </div>
+
+                            {/* Alpha (Right) */}
+                            <div className="col-span-4 flex items-center justify-end gap-3 text-slate-900 pr-4">
+                                <div className="flex flex-col items-end">
+                                    <span className="font-bold text-lg group-hover:text-primary transition-colors">{point.alpha}</span>
+                                    {point.feature.includes("Cost") && (
+                                        <span className="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">
+                                            75% Lower Price Guaranteed
+                                        </span>
+                                    )}
+                                </div>
+                                <div className="w-8 h-8 rounded-full bg-blue-100 text-primary flex items-center justify-center shadow-sm group-hover:scale-110 group-hover:bg-primary group-hover:text-white transition-all">
+                                    <Check className="w-5 h-5" />
+                                </div>
                             </div>
                         </motion.div>
                     ))}
                 </div>
 
-                {/* Footer Summary */}
-                <div className="bg-gradient-to-r from-primary/10 to-blue-500/10 p-8 text-center border-t border-primary/10">
-                    <p className="text-slate-700 font-medium">
-                        <Zap className="w-5 h-5 text-primary inline-block mr-2" />
-                        Stop overpaying for slow results. <span className="font-bold text-slate-900">Switch to Alpha.</span>
-                    </p>
-                </div>
+                {/* Premium Callout Box */}
+                <motion.div
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.6 }}
+                    className="mt-12 mx-4 md:mx-0 p-1 rounded-2xl bg-gradient-to-r from-red-200 via-slate-200 to-blue-200 opacity-80"
+                >
+                    <div className="bg-white rounded-xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                        <div className="absolute inset-0 bg-[url('/grid.svg')] opacity-5" />
+
+                        <div className="flex items-center gap-4 relative z-10">
+                            <div className="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center">
+                                <ShieldAlert className="w-6 h-6 text-red-500" />
+                            </div>
+                            <div>
+                                <h4 className="font-bold text-slate-900">Don't settle for "Good Enough"</h4>
+                                <p className="text-slate-500 text-sm">Most agencies outsource. We engineer in-house.</p>
+                            </div>
+                        </div>
+
+                        <div className="hidden md:block w-px h-12 bg-slate-100" />
+
+                        <div className="flex items-center gap-4 relative z-10">
+                            <div>
+                                <h4 className="font-bold text-right text-slate-900">Experience the difference</h4>
+                                <p className="text-slate-500 text-sm text-right">Join the top 1% of digital brands.</p>
+                            </div>
+                            <div className="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center">
+                                <Rocket className="w-6 h-6 text-primary" />
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+
             </div>
         </Section>
     );

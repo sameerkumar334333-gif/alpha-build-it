@@ -5,7 +5,7 @@ import { Process } from "@/components/sections/Process";
 import { ServicesBento } from "@/components/sections/ServicesBento";
 import { WhyUs } from "@/components/sections/WhyUs";
 import { Comparison } from "@/components/sections/Comparison";
-import { Testimonials } from "@/components/sections/Testimonials";
+import { SitePreview } from "@/components/sections/SitePreview";
 import { FounderBio } from "@/components/sections/FounderBio";
 
 export default function Home() {
@@ -16,7 +16,7 @@ export default function Home() {
       <WhyUs />
       <ServicesBento />
       <Comparison />
-      <Testimonials />
+      <SitePreview />
       <FounderBio />
       <Process />
       <Footer />
