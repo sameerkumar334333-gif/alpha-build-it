@@ -15,7 +15,7 @@ const COMPARISON_POINTS = [
 
 export function Comparison() {
     return (
-        <Section className="py-32 relative overflow-hidden">
+        <Section className="py-20 md:py-32 relative overflow-hidden">
             {/* Background Decor */}
             <div className="absolute top-1/2 left-0 w-[500px] h-[500px] bg-red-500/5 rounded-full blur-[120px] -translate-y-1/2 -translate-x-1/2 pointer-events-none" />
             <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-[120px] -translate-y-1/2 translate-x-1/2 pointer-events-none" />

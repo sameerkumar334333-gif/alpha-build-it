@@ -38,7 +38,7 @@ const projects = [
 
 export function SitePreview() {
     return (
-        <Section className="py-24 bg-slate-50 border-y border-slate-200 overflow-hidden relative">
+        <Section className="py-20 md:py-32 bg-slate-50 border-y border-slate-200 overflow-hidden relative">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
                 <div className="text-center mb-20">
                     <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-slate-500 text-xs font-bold uppercase tracking-widest mb-6">
